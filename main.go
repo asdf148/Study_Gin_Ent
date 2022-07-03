@@ -3,7 +3,6 @@ package main
 
 import (
 	"net/http"
-	DB "study_go/DB"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,12 +16,6 @@ func setupRouter() *gin.Engine {
 }
 
 func main() {
-	db := DB.GetConnector()
-	err := db.Ping()
-	if err != nil {
-		panic(err)
-	}
-
 	r := setupRouter()
 	r.Run(":8080")
 }

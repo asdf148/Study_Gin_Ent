@@ -5,6 +5,6 @@ import (
 	"fmt"
 )
 
-func main() {
+func UserController() {
 	fmt.Println("Hello World!")
 }

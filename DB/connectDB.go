@@ -2,29 +2,14 @@
 package DB
 
 import (
-	"database/sql"
-	"time"
-
-	"github.com/go-sql-driver/mysql"
+	"log"
+	"study_go/ent"
 )
 
-func GetConnector() *sql.DB {
-	cfg := mysql.Config{
-		User:                 "Gin",
-		Passwd:               "Gin",
-		Net:                  "tcp",
-		Addr:                 "127.0.0.1:3306",
-		Collation:            "utf8mb4_general_ci",
-		Loc:                  time.UTC,
-		MaxAllowedPacket:     4 << 20.,
-		AllowNativePasswords: true,
-		CheckConnLiveness:    true,
-		DBName:               "gin_ent",
-	}
-	connector, err := mysql.NewConnector(&cfg)
+func GetConnector() *ent.Client {
+	client, err := ent.Open("mysql", "Gin:Gin@tcp(localhost:3306)/gin_ent?parseTime=True")
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-	db := sql.OpenDB(connector)
-	return db
+	return client
 }
