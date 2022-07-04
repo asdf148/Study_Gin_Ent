@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	dto "study_go/dto/user"
 	"study_go/ent"
 	myutils "study_go/myUtils"
@@ -11,11 +10,14 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var customUtil myutils.JwtUtil = myutils.NewJwtUtil()
+var (
+	customUtil myutils.JwtUtil = myutils.NewJwtUtil()
+	errorHandler myutils.ErrorHandler = myutils.NewErrorHandler()
+)
 
 type UserService interface {
-	Join(dto.JoinDTO, *gin.Context) (*ent.User, error)
-	Login(dto.LoginDTO, *gin.Context) (string, error)
+	Join(dto.JoinDTO, *gin.Context) *ent.User
+	Login(dto.LoginDTO, *gin.Context) string
 }
 
 type userService struct {
@@ -28,40 +30,23 @@ func NewUserService(repository repository.UserRepository) UserService {
 	}
 }
 
-func (service *userService) Join(joinDTO dto.JoinDTO, ctx *gin.Context) (*ent.User, error) {
+func (service *userService) Join(joinDTO dto.JoinDTO, ctx *gin.Context) *ent.User {
 	hash, err := bcrypt.GenerateFromPassword([]byte(joinDTO.Password), bcrypt.DefaultCost)
-	if err != nil {
-		fmt.Println("failed password conversion at service: %w", err)
-		return nil, err
-	}
+	errorHandler.ErrorHandling(err, "failed password conversion at service")
 	joinDTO.Password = string(hash)
 
-	user, err := service.repository.Create(joinDTO, ctx)
-	if err != nil {
-		fmt.Println("failed creating user at service: %w", err)
-		return nil, err
-	}
-	return user, nil
+	user := service.repository.Create(joinDTO, ctx)
+	return user
 }
 
-func (service *userService) Login(loginDTO dto.LoginDTO, ctx *gin.Context) (string, error) {
-	user, err := service.repository.FindOneByEmail(loginDTO.Email, ctx)
-	if err != nil {
-		fmt.Println("failed finding user at service: %w", err)
-		return "", err
-	}
+func (service *userService) Login(loginDTO dto.LoginDTO, ctx *gin.Context) string {
+	user := service.repository.FindOneByEmail(loginDTO.Email, ctx)
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginDTO.Password))
-	if err != nil {
-		fmt.Println("password is incorrect: %w", err)
-		return "", err
-	}
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginDTO.Password))
+	errorHandler.ErrorHandling(err, "password is incorrect at service")
 
 	token, err := customUtil.CreateAccessToken(user.ID)
-	if err != nil {
-		fmt.Println("password is incorrect: %w", err)
-		return "", err
-	}
+	errorHandler.ErrorHandling(err, "failed token create at service")
 
-	return token, nil
+	return token
 }
