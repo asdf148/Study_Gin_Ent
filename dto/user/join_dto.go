@@ -1,4 +1,4 @@
-package dto
+package user
 
 type JoinDTO struct {
 	Name string `json:"name" binding:"required"`

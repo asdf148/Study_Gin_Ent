@@ -1,7 +1,7 @@
 package service
 
 import (
-	dto "study_go/dto/user"
+	userDTO "study_go/dto/user"
 	"study_go/ent"
 	myutils "study_go/myUtils"
 	"study_go/repository"
@@ -16,8 +16,8 @@ var (
 )
 
 type UserService interface {
-	Join(dto.JoinDTO, *gin.Context) *ent.User
-	Login(dto.LoginDTO, *gin.Context) string
+	Join(userDTO.JoinDTO, *gin.Context) *ent.User
+	Login(userDTO.LoginDTO, *gin.Context) string
 }
 
 type userService struct {
@@ -30,7 +30,7 @@ func NewUserService(repository repository.UserRepository) UserService {
 	}
 }
 
-func (service *userService) Join(joinDTO dto.JoinDTO, ctx *gin.Context) *ent.User {
+func (service *userService) Join(joinDTO userDTO.JoinDTO, ctx *gin.Context) *ent.User {
 	hash, err := bcrypt.GenerateFromPassword([]byte(joinDTO.Password), bcrypt.DefaultCost)
 	errorHandler.ErrorHandling(err, "failed password conversion at service")
 	joinDTO.Password = string(hash)
@@ -39,7 +39,7 @@ func (service *userService) Join(joinDTO dto.JoinDTO, ctx *gin.Context) *ent.Use
 	return user
 }
 
-func (service *userService) Login(loginDTO dto.LoginDTO, ctx *gin.Context) string {
+func (service *userService) Login(loginDTO userDTO.LoginDTO, ctx *gin.Context) string {
 	user := service.repository.FindOneByEmail(loginDTO.Email, ctx)
 
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginDTO.Password))

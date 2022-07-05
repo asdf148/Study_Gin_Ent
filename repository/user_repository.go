@@ -2,7 +2,7 @@ package repository
 
 import (
 	"study_go/DB"
-	dto "study_go/dto/user"
+	userDTO "study_go/dto/user"
 	"study_go/ent"
 	"study_go/ent/user"
 	myutils "study_go/myUtils"
@@ -19,8 +19,8 @@ type UserRepository interface {
 	FindOne(int, *gin.Context) *ent.User
 	FindOneByEmail(string, *gin.Context) *ent.User
 	FindAll(*gin.Context) []*ent.User
-	Create(dto.JoinDTO, *gin.Context) *ent.User
-	Update(int, dto.UpdateUserDTO, *gin.Context) *ent.User
+	Create(userDTO.JoinDTO, *gin.Context) *ent.User
+	Update(int, userDTO.UpdateUserDTO, *gin.Context) *ent.User
 	Delete(int, *gin.Context)
 }
 
@@ -48,13 +48,13 @@ func (repository *userRepository) FindAll(ctx *gin.Context) []*ent.User {
 	return users
 }
 
-func (repository *userRepository) Create(joinDTO dto.JoinDTO, ctx *gin.Context) *ent.User {
+func (repository *userRepository) Create(joinDTO userDTO.JoinDTO, ctx *gin.Context) *ent.User {
 	user, err := database.User.Create().SetName(joinDTO.Name).SetEmail(joinDTO.Email).SetPassword(joinDTO.Password).Save(ctx)
 	errorHandler.ErrorHandling(err, "failed creating user at repository")
 	return user
 }
 
-func (repository *userRepository) Update(userId int, updateUserDTO dto.UpdateUserDTO, ctx *gin.Context) *ent.User {
+func (repository *userRepository) Update(userId int, updateUserDTO userDTO.UpdateUserDTO, ctx *gin.Context) *ent.User {
 	user, err := database.User.UpdateOneID(userId).SetName(updateUserDTO.Name).Save(ctx)
 	errorHandler.ErrorHandling(err, "failed updating user at repository")
 	return user
@@ -63,5 +63,4 @@ func (repository *userRepository) Update(userId int, updateUserDTO dto.UpdateUse
 func (repository *userRepository) Delete(userId int, ctx *gin.Context) {
 	err := database.User.DeleteOneID(userId).Exec(ctx)
 	errorHandler.ErrorHandling(err, "failed deleting user at repository")
-	return
 }

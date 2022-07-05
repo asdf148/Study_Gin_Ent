@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"study_go/controller"
 	"study_go/dto"
+	"study_go/middleware"
 	"study_go/repository"
 	"study_go/service"
 
@@ -15,6 +16,8 @@ var (
 	userRepository repository.UserRepository = repository.NewUserRepository()
 	userService service.UserService = service.NewUserService(userRepository)
 	userController controller.UserController = controller.NewUserController(userService)
+
+	tokenMiddleware middleware.TokenVerification = middleware.NewTokenVerification()
 )
 
 func initializeRoutes() *gin.Engine {
@@ -36,6 +39,15 @@ func initializeRoutes() *gin.Engine {
 			}()
 			result := userController.Login(ctx)
 			ctx.IndentedJSON(http.StatusCreated, result)
+		})
+	}
+
+	todoRoutes := router.Group("todo")
+	{
+
+		todoRoutes.Use(tokenMiddleware.TokenVerify)
+		todoRoutes.POST("/", func(ctx *gin.Context) {
+			ctx.IndentedJSON(http.StatusCreated, nil)
 		})
 	}
 

@@ -2,7 +2,7 @@
 package controller
 
 import (
-	dto "study_go/dto/user"
+	userDTO "study_go/dto/user"
 	myutils "study_go/myUtils"
 	"study_go/service"
 
@@ -29,7 +29,7 @@ func NewUserController(service service.UserService) UserController {
 }
 
 func (controller *userController) Join(ctx *gin.Context) gin.H {
-	var joinDTO dto.JoinDTO
+	var joinDTO userDTO.JoinDTO
 	err := ctx.ShouldBindJSON(&joinDTO)
 	errorHandler.ErrorHandling(err, "")
 	return gin.H{
@@ -38,7 +38,7 @@ func (controller *userController) Join(ctx *gin.Context) gin.H {
 }
 
 func (controller *userController) Login(ctx *gin.Context) gin.H {
-	var loginDTO dto.LoginDTO
+	var loginDTO userDTO.LoginDTO
 	err := ctx.ShouldBindJSON(&loginDTO)
 	errorHandler.ErrorHandling(err, "")
 	token := controller.service.Login(loginDTO, ctx)
