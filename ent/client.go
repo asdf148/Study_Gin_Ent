@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/dev-yakuza/study-golang/gin/start/ent/migrate"
+	"study_go/ent/migrate"
 
-	"github.com/dev-yakuza/study-golang/gin/start/ent/todo"
-	"github.com/dev-yakuza/study-golang/gin/start/ent/user"
+	"study_go/ent/todo"
+	"study_go/ent/user"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -215,15 +215,15 @@ func (c *TodoClient) GetX(ctx context.Context, id int) *Todo {
 	return obj
 }
 
-// QueryUsers queries the users edge of a Todo.
-func (c *TodoClient) QueryUsers(t *Todo) *UserQuery {
+// QueryUser queries the user edge of a Todo.
+func (c *TodoClient) QueryUser(t *Todo) *UserQuery {
 	query := &UserQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := t.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(todo.Table, todo.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, todo.UsersTable, todo.UsersColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, todo.UserTable, todo.UserColumn),
 		)
 		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
 		return fromV, nil

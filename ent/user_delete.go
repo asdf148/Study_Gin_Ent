@@ -5,12 +5,12 @@ package ent
 import (
 	"context"
 	"fmt"
+	"study_go/ent/predicate"
+	"study_go/ent/user"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/dev-yakuza/study-golang/gin/start/ent/predicate"
-	"github.com/dev-yakuza/study-golang/gin/start/ent/user"
 )
 
 // UserDelete is the builder for deleting a User entity.

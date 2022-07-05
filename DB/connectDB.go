@@ -4,6 +4,8 @@ package DB
 import (
 	"log"
 	"study_go/ent"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func GetConnector() *ent.Client {

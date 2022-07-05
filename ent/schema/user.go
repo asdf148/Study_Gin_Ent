@@ -19,7 +19,7 @@ func (User) Fields() []ent.Field {
 			dialect.MySQL: "varchar(10)",
 		}),
 		field.String("email").SchemaType(map[string]string{
-			dialect.MySQL: "varchar(20)",
+			dialect.MySQL: "varchar(30)",
 		}),
 		field.String("password").SchemaType(map[string]string{
 			dialect.MySQL: "varchar(100)",

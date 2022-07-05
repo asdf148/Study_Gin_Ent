@@ -43,7 +43,10 @@ func (service *userService) Login(loginDTO dto.LoginDTO, ctx *gin.Context) strin
 	user := service.repository.FindOneByEmail(loginDTO.Email, ctx)
 
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginDTO.Password))
-	errorHandler.ErrorHandling(err, "password is incorrect at service")
+	if err != nil {
+		errorHandler.ErrorHandling(err, "password is incorrect at service")
+		return ""
+	}
 
 	token, err := customUtil.CreateAccessToken(user.ID)
 	errorHandler.ErrorHandling(err, "failed token create at service")

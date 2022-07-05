@@ -15,22 +15,19 @@ type Todo struct {
 // Fields of the Todo.
 func (Todo) Fields() []ent.Field {
 	return []ent.Field{
+		field.Int("user_id"),
 		field.String("title").SchemaType(map[string]string{
-			dialect.MySQL: "varchar(30)",
+			dialect.MySQL: "varchar(20)",
 		}),
 		field.String("content").SchemaType(map[string]string{
 			dialect.MySQL: "text(300)",
 		}),
-		field.Int("user_id"),
 	}
 }
 
 // Edges of the Todo.
 func (Todo) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("users", User.Type).
-			Ref("todos").
-			Unique().
-			Field("user_id").Required(),
+		edge.From("user", User.Type).Ref("todos").Unique().Field("user_id").Required(),
 	}
 }

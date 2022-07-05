@@ -5,11 +5,11 @@ package ent
 import (
 	"errors"
 	"fmt"
+	"study_go/ent/todo"
+	"study_go/ent/user"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/dev-yakuza/study-golang/gin/start/ent/todo"
-	"github.com/dev-yakuza/study-golang/gin/start/ent/user"
 )
 
 // ent aliases to avoid import conflicts in user's code.

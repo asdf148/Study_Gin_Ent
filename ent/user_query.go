@@ -8,13 +8,13 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"study_go/ent/predicate"
+	"study_go/ent/todo"
+	"study_go/ent/user"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/dev-yakuza/study-golang/gin/start/ent/predicate"
-	"github.com/dev-yakuza/study-golang/gin/start/ent/todo"
-	"github.com/dev-yakuza/study-golang/gin/start/ent/user"
 )
 
 // UserQuery is the builder for querying User entities.

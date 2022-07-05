@@ -5,10 +5,10 @@ package ent
 import (
 	"fmt"
 	"strings"
+	"study_go/ent/todo"
+	"study_go/ent/user"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/dev-yakuza/study-golang/gin/start/ent/todo"
-	"github.com/dev-yakuza/study-golang/gin/start/ent/user"
 )
 
 // Todo is the model entity for the Todo schema.
@@ -16,12 +16,12 @@ type Todo struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
+	// UserID holds the value of the "user_id" field.
+	UserID int `json:"user_id,omitempty"`
 	// Title holds the value of the "title" field.
 	Title string `json:"title,omitempty"`
 	// Content holds the value of the "content" field.
 	Content string `json:"content,omitempty"`
-	// UserID holds the value of the "user_id" field.
-	UserID int `json:"user_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TodoQuery when eager-loading is set.
 	Edges TodoEdges `json:"edges"`
@@ -29,25 +29,25 @@ type Todo struct {
 
 // TodoEdges holds the relations/edges for other nodes in the graph.
 type TodoEdges struct {
-	// Users holds the value of the users edge.
-	Users *User `json:"users,omitempty"`
+	// User holds the value of the user edge.
+	User *User `json:"user,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
-// UsersOrErr returns the Users value or an error if the edge
+// UserOrErr returns the User value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e TodoEdges) UsersOrErr() (*User, error) {
+func (e TodoEdges) UserOrErr() (*User, error) {
 	if e.loadedTypes[0] {
-		if e.Users == nil {
-			// The edge users was loaded in eager-loading,
+		if e.User == nil {
+			// The edge user was loaded in eager-loading,
 			// but was not found.
 			return nil, &NotFoundError{label: user.Label}
 		}
-		return e.Users, nil
+		return e.User, nil
 	}
-	return nil, &NotLoadedError{edge: "users"}
+	return nil, &NotLoadedError{edge: "user"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -80,6 +80,12 @@ func (t *Todo) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			t.ID = int(value.Int64)
+		case todo.FieldUserID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
+			} else if value.Valid {
+				t.UserID = int(value.Int64)
+			}
 		case todo.FieldTitle:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field title", values[i])
@@ -92,20 +98,14 @@ func (t *Todo) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				t.Content = value.String
 			}
-		case todo.FieldUserID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field user_id", values[i])
-			} else if value.Valid {
-				t.UserID = int(value.Int64)
-			}
 		}
 	}
 	return nil
 }
 
-// QueryUsers queries the "users" edge of the Todo entity.
-func (t *Todo) QueryUsers() *UserQuery {
-	return (&TodoClient{config: t.config}).QueryUsers(t)
+// QueryUser queries the "user" edge of the Todo entity.
+func (t *Todo) QueryUser() *UserQuery {
+	return (&TodoClient{config: t.config}).QueryUser(t)
 }
 
 // Update returns a builder for updating this Todo.
@@ -131,12 +131,12 @@ func (t *Todo) String() string {
 	var builder strings.Builder
 	builder.WriteString("Todo(")
 	builder.WriteString(fmt.Sprintf("id=%v", t.ID))
+	builder.WriteString(", user_id=")
+	builder.WriteString(fmt.Sprintf("%v", t.UserID))
 	builder.WriteString(", title=")
 	builder.WriteString(t.Title)
 	builder.WriteString(", content=")
 	builder.WriteString(t.Content)
-	builder.WriteString(", user_id=")
-	builder.WriteString(fmt.Sprintf("%v", t.UserID))
 	builder.WriteByte(')')
 	return builder.String()
 }

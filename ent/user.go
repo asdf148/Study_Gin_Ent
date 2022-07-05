@@ -5,9 +5,9 @@ package ent
 import (
 	"fmt"
 	"strings"
+	"study_go/ent/user"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/dev-yakuza/study-golang/gin/start/ent/user"
 )
 
 // User is the model entity for the User schema.

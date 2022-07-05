@@ -14,7 +14,7 @@ func NewErrorHandler() ErrorHandler {
 
 func (handler *errorHandler) ErrorHandling(err error, error_message string) {
 	if err != nil {
-		fmt.Println(error_message + ": %w", err)
-		return
+		fmt.Println(error_message + ":", err)
+		panic(err)
 	}
 }

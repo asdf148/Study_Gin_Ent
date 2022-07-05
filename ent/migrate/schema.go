@@ -11,7 +11,7 @@ var (
 	// TodosColumns holds the columns for the "todos" table.
 	TodosColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "title", Type: field.TypeString, SchemaType: map[string]string{"mysql": "varchar(30)"}},
+		{Name: "title", Type: field.TypeString, SchemaType: map[string]string{"mysql": "varchar(20)"}},
 		{Name: "content", Type: field.TypeString, SchemaType: map[string]string{"mysql": "text(300)"}},
 		{Name: "user_id", Type: field.TypeInt},
 	}
@@ -33,7 +33,7 @@ var (
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString, SchemaType: map[string]string{"mysql": "varchar(10)"}},
-		{Name: "email", Type: field.TypeString, SchemaType: map[string]string{"mysql": "varchar(20)"}},
+		{Name: "email", Type: field.TypeString, SchemaType: map[string]string{"mysql": "varchar(30)"}},
 		{Name: "password", Type: field.TypeString, SchemaType: map[string]string{"mysql": "varchar(100)"}},
 	}
 	// UsersTable holds the schema information for the "users" table.

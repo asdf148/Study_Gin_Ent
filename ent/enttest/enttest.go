@@ -4,10 +4,9 @@ package enttest
 
 import (
 	"context"
-
-	"github.com/dev-yakuza/study-golang/gin/start/ent"
+	"study_go/ent"
 	// required by schema hooks.
-	_ "github.com/dev-yakuza/study-golang/gin/start/ent/runtime"
+	_ "study_go/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
 )

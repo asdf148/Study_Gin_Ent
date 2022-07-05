@@ -5,8 +5,7 @@ package hook
 import (
 	"context"
 	"fmt"
-
-	"github.com/dev-yakuza/study-golang/gin/start/ent"
+	"study_go/ent"
 )
 
 // The TodoFunc type is an adapter to allow the use of ordinary

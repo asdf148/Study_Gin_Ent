@@ -6,13 +6,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"study_go/ent/predicate"
+	"study_go/ent/todo"
+	"study_go/ent/user"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/dev-yakuza/study-golang/gin/start/ent/predicate"
-	"github.com/dev-yakuza/study-golang/gin/start/ent/todo"
-	"github.com/dev-yakuza/study-golang/gin/start/ent/user"
 )
 
 // TodoUpdate is the builder for updating Todo entities.
@@ -28,6 +28,12 @@ func (tu *TodoUpdate) Where(ps ...predicate.Todo) *TodoUpdate {
 	return tu
 }
 
+// SetUserID sets the "user_id" field.
+func (tu *TodoUpdate) SetUserID(i int) *TodoUpdate {
+	tu.mutation.SetUserID(i)
+	return tu
+}
+
 // SetTitle sets the "title" field.
 func (tu *TodoUpdate) SetTitle(s string) *TodoUpdate {
 	tu.mutation.SetTitle(s)
@@ -40,21 +46,9 @@ func (tu *TodoUpdate) SetContent(s string) *TodoUpdate {
 	return tu
 }
 
-// SetUserID sets the "user_id" field.
-func (tu *TodoUpdate) SetUserID(i int) *TodoUpdate {
-	tu.mutation.SetUserID(i)
-	return tu
-}
-
-// SetUsersID sets the "users" edge to the User entity by ID.
-func (tu *TodoUpdate) SetUsersID(id int) *TodoUpdate {
-	tu.mutation.SetUsersID(id)
-	return tu
-}
-
-// SetUsers sets the "users" edge to the User entity.
-func (tu *TodoUpdate) SetUsers(u *User) *TodoUpdate {
-	return tu.SetUsersID(u.ID)
+// SetUser sets the "user" edge to the User entity.
+func (tu *TodoUpdate) SetUser(u *User) *TodoUpdate {
+	return tu.SetUserID(u.ID)
 }
 
 // Mutation returns the TodoMutation object of the builder.
@@ -62,9 +56,9 @@ func (tu *TodoUpdate) Mutation() *TodoMutation {
 	return tu.mutation
 }
 
-// ClearUsers clears the "users" edge to the User entity.
-func (tu *TodoUpdate) ClearUsers() *TodoUpdate {
-	tu.mutation.ClearUsers()
+// ClearUser clears the "user" edge to the User entity.
+func (tu *TodoUpdate) ClearUser() *TodoUpdate {
+	tu.mutation.ClearUser()
 	return tu
 }
 
@@ -130,8 +124,8 @@ func (tu *TodoUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (tu *TodoUpdate) check() error {
-	if _, ok := tu.mutation.UsersID(); tu.mutation.UsersCleared() && !ok {
-		return errors.New(`ent: clearing a required unique edge "Todo.users"`)
+	if _, ok := tu.mutation.UserID(); tu.mutation.UserCleared() && !ok {
+		return errors.New(`ent: clearing a required unique edge "Todo.user"`)
 	}
 	return nil
 }
@@ -168,12 +162,12 @@ func (tu *TodoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: todo.FieldContent,
 		})
 	}
-	if tu.mutation.UsersCleared() {
+	if tu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   todo.UsersTable,
-			Columns: []string{todo.UsersColumn},
+			Table:   todo.UserTable,
+			Columns: []string{todo.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -184,12 +178,12 @@ func (tu *TodoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tu.mutation.UsersIDs(); len(nodes) > 0 {
+	if nodes := tu.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   todo.UsersTable,
-			Columns: []string{todo.UsersColumn},
+			Table:   todo.UserTable,
+			Columns: []string{todo.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -222,6 +216,12 @@ type TodoUpdateOne struct {
 	mutation *TodoMutation
 }
 
+// SetUserID sets the "user_id" field.
+func (tuo *TodoUpdateOne) SetUserID(i int) *TodoUpdateOne {
+	tuo.mutation.SetUserID(i)
+	return tuo
+}
+
 // SetTitle sets the "title" field.
 func (tuo *TodoUpdateOne) SetTitle(s string) *TodoUpdateOne {
 	tuo.mutation.SetTitle(s)
@@ -234,21 +234,9 @@ func (tuo *TodoUpdateOne) SetContent(s string) *TodoUpdateOne {
 	return tuo
 }
 
-// SetUserID sets the "user_id" field.
-func (tuo *TodoUpdateOne) SetUserID(i int) *TodoUpdateOne {
-	tuo.mutation.SetUserID(i)
-	return tuo
-}
-
-// SetUsersID sets the "users" edge to the User entity by ID.
-func (tuo *TodoUpdateOne) SetUsersID(id int) *TodoUpdateOne {
-	tuo.mutation.SetUsersID(id)
-	return tuo
-}
-
-// SetUsers sets the "users" edge to the User entity.
-func (tuo *TodoUpdateOne) SetUsers(u *User) *TodoUpdateOne {
-	return tuo.SetUsersID(u.ID)
+// SetUser sets the "user" edge to the User entity.
+func (tuo *TodoUpdateOne) SetUser(u *User) *TodoUpdateOne {
+	return tuo.SetUserID(u.ID)
 }
 
 // Mutation returns the TodoMutation object of the builder.
@@ -256,9 +244,9 @@ func (tuo *TodoUpdateOne) Mutation() *TodoMutation {
 	return tuo.mutation
 }
 
-// ClearUsers clears the "users" edge to the User entity.
-func (tuo *TodoUpdateOne) ClearUsers() *TodoUpdateOne {
-	tuo.mutation.ClearUsers()
+// ClearUser clears the "user" edge to the User entity.
+func (tuo *TodoUpdateOne) ClearUser() *TodoUpdateOne {
+	tuo.mutation.ClearUser()
 	return tuo
 }
 
@@ -331,8 +319,8 @@ func (tuo *TodoUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (tuo *TodoUpdateOne) check() error {
-	if _, ok := tuo.mutation.UsersID(); tuo.mutation.UsersCleared() && !ok {
-		return errors.New(`ent: clearing a required unique edge "Todo.users"`)
+	if _, ok := tuo.mutation.UserID(); tuo.mutation.UserCleared() && !ok {
+		return errors.New(`ent: clearing a required unique edge "Todo.user"`)
 	}
 	return nil
 }
@@ -386,12 +374,12 @@ func (tuo *TodoUpdateOne) sqlSave(ctx context.Context) (_node *Todo, err error) 
 			Column: todo.FieldContent,
 		})
 	}
-	if tuo.mutation.UsersCleared() {
+	if tuo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   todo.UsersTable,
-			Columns: []string{todo.UsersColumn},
+			Table:   todo.UserTable,
+			Columns: []string{todo.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -402,12 +390,12 @@ func (tuo *TodoUpdateOne) sqlSave(ctx context.Context) (_node *Todo, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tuo.mutation.UsersIDs(); len(nodes) > 0 {
+	if nodes := tuo.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   todo.UsersTable,
-			Columns: []string{todo.UsersColumn},
+			Table:   todo.UserTable,
+			Columns: []string{todo.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

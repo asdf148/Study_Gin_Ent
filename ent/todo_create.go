@@ -6,11 +6,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"study_go/ent/todo"
+	"study_go/ent/user"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/dev-yakuza/study-golang/gin/start/ent/todo"
-	"github.com/dev-yakuza/study-golang/gin/start/ent/user"
 )
 
 // TodoCreate is the builder for creating a Todo entity.
@@ -18,6 +18,12 @@ type TodoCreate struct {
 	config
 	mutation *TodoMutation
 	hooks    []Hook
+}
+
+// SetUserID sets the "user_id" field.
+func (tc *TodoCreate) SetUserID(i int) *TodoCreate {
+	tc.mutation.SetUserID(i)
+	return tc
 }
 
 // SetTitle sets the "title" field.
@@ -32,21 +38,9 @@ func (tc *TodoCreate) SetContent(s string) *TodoCreate {
 	return tc
 }
 
-// SetUserID sets the "user_id" field.
-func (tc *TodoCreate) SetUserID(i int) *TodoCreate {
-	tc.mutation.SetUserID(i)
-	return tc
-}
-
-// SetUsersID sets the "users" edge to the User entity by ID.
-func (tc *TodoCreate) SetUsersID(id int) *TodoCreate {
-	tc.mutation.SetUsersID(id)
-	return tc
-}
-
-// SetUsers sets the "users" edge to the User entity.
-func (tc *TodoCreate) SetUsers(u *User) *TodoCreate {
-	return tc.SetUsersID(u.ID)
+// SetUser sets the "user" edge to the User entity.
+func (tc *TodoCreate) SetUser(u *User) *TodoCreate {
+	return tc.SetUserID(u.ID)
 }
 
 // Mutation returns the TodoMutation object of the builder.
@@ -119,6 +113,9 @@ func (tc *TodoCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (tc *TodoCreate) check() error {
+	if _, ok := tc.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Todo.user_id"`)}
+	}
 	if _, ok := tc.mutation.Title(); !ok {
 		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "Todo.title"`)}
 	}
@@ -126,10 +123,7 @@ func (tc *TodoCreate) check() error {
 		return &ValidationError{Name: "content", err: errors.New(`ent: missing required field "Todo.content"`)}
 	}
 	if _, ok := tc.mutation.UserID(); !ok {
-		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Todo.user_id"`)}
-	}
-	if _, ok := tc.mutation.UsersID(); !ok {
-		return &ValidationError{Name: "users", err: errors.New(`ent: missing required edge "Todo.users"`)}
+		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Todo.user"`)}
 	}
 	return nil
 }
@@ -174,12 +168,12 @@ func (tc *TodoCreate) createSpec() (*Todo, *sqlgraph.CreateSpec) {
 		})
 		_node.Content = value
 	}
-	if nodes := tc.mutation.UsersIDs(); len(nodes) > 0 {
+	if nodes := tc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   todo.UsersTable,
-			Columns: []string{todo.UsersColumn},
+			Table:   todo.UserTable,
+			Columns: []string{todo.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

@@ -5,12 +5,12 @@ package ent
 import (
 	"context"
 	"fmt"
+	"study_go/ent/predicate"
+	"study_go/ent/todo"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/dev-yakuza/study-golang/gin/start/ent/predicate"
-	"github.com/dev-yakuza/study-golang/gin/start/ent/todo"
 )
 
 // TodoDelete is the builder for deleting a Todo entity.
