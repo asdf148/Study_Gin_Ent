@@ -12,7 +12,7 @@ type TodoRepository interface {
 	FindOne(int, *gin.Context) *ent.Todo
 	FindAll(*gin.Context) []*ent.Todo
 	Create(todoDTO.CreateTodoDTO, int, *ent.User, *gin.Context) *ent.Todo
-	Update(int, todoDTO.UpdateTodoDTO, *gin.Context) *ent.Todo
+	Update(todoDTO.UpdateTodoDTO, int, *gin.Context) *ent.Todo
 	Delete(int, *gin.Context)
 }
 
@@ -40,7 +40,7 @@ func (repository *todoRepository) Create(createTodoDTO todoDTO.CreateTodoDTO, us
 	return todo
 }
 
-func (repository *todoRepository) Update(todoId int, updateUserDTO todoDTO.UpdateTodoDTO, ctx *gin.Context) *ent.Todo {
+func (repository *todoRepository) Update(updateUserDTO todoDTO.UpdateTodoDTO, todoId int, ctx *gin.Context) *ent.Todo {
 	todo, err := database.Todo.UpdateOneID(todoId).SetTitle(updateUserDTO.Title).SetContent(updateUserDTO.Content).Save(ctx)
 	errorHandler.ErrorHandling(err, "failed updating todo at repository")
 	return todo

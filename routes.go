@@ -26,6 +26,13 @@ func initializeRoutes() *gin.Engine {
 	userRoutes := router.Group("user")
 	{
 		userRoutes.POST("/join", func(ctx *gin.Context) {
+			defer func() {
+				if r := recover(); r != nil {
+					error_message := fmt.Sprint(r)
+					errorResponse := dto.NewErrorResponse(error_message)
+					ctx.IndentedJSON(http.StatusBadRequest, errorResponse)
+				}
+			}()
 			ctx.IndentedJSON(http.StatusCreated, userController.Join(ctx))
 		})
 
