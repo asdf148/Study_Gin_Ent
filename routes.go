@@ -1,10 +1,7 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
 	"study_go/controller"
-	"study_go/dto"
 	"study_go/middleware"
 	"study_go/repository"
 	"study_go/service"
@@ -29,55 +26,24 @@ func initializeRoutes() *gin.Engine {
 
 	userRoutes := router.Group("user")
 	{
-		userRoutes.POST("/join", func(ctx *gin.Context) {
-			defer routerErrorHandler(ctx)
-			ctx.IndentedJSON(http.StatusCreated, userController.Join(ctx))
-		})
+		userRoutes.POST("/join", userController.Join)
 
-		userRoutes.POST("/login", func(ctx *gin.Context) {
-			defer routerErrorHandler(ctx)
-			result := userController.Login(ctx)
-			ctx.IndentedJSON(http.StatusCreated, result)
-		})
+		userRoutes.POST("/login", userController.Login)
 	}
 
 	todoRoutes := router.Group("todo")
 	{
-		todoRoutes.GET("/", func(ctx *gin.Context) {
-			defer routerErrorHandler(ctx)
-			ctx.IndentedJSON(http.StatusOK, todoController.FindAllTodo(ctx))
-		})
+		todoRoutes.GET("/", todoController.FindAllTodo)
 
-		todoRoutes.GET("/detail/:todoId", func(ctx *gin.Context) {
-			defer routerErrorHandler(ctx)
-			ctx.IndentedJSON(http.StatusOK, todoController.FindOneTodo(ctx))
-		})
+		todoRoutes.GET("/detail/:todoId", todoController.FindOneTodo)
 
 		todoRoutes.Use(tokenMiddleware.TokenVerify)
-		todoRoutes.POST("/", func(ctx *gin.Context) {
-			defer routerErrorHandler(ctx)
-			ctx.IndentedJSON(http.StatusCreated, todoController.AddTodo(ctx))
-		})
+		todoRoutes.POST("/", todoController.AddTodo)
 
-		todoRoutes.PUT("/todoId", func(ctx *gin.Context) {
-			defer routerErrorHandler(ctx)
-			ctx.IndentedJSON(http.StatusOK, todoController.ModifyTodo(ctx))
-		})
+		todoRoutes.PUT("/todoId", todoController.ModifyTodo)
 
-		todoRoutes.DELETE("/:todoId", func(ctx *gin.Context) {
-			defer routerErrorHandler(ctx)
-			todoController.DeleteTodo(ctx)
-			ctx.IndentedJSON(http.StatusOK, nil)
-		})
+		todoRoutes.DELETE("/:todoId", todoController.DeleteTodo)
 	}
 
 	return router
-}
-
-func routerErrorHandler(ctx *gin.Context) {
-	if r := recover(); r != nil {
-		error_message := fmt.Sprint(r)
-		errorResponse := dto.NewErrorResponse(error_message)
-		ctx.IndentedJSON(http.StatusBadRequest, errorResponse)
-	}
 }

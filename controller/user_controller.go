@@ -2,6 +2,9 @@
 package controller
 
 import (
+	"fmt"
+	"net/http"
+	"study_go/dto"
 	userDTO "study_go/dto/user"
 	myutils "study_go/myUtils"
 	"study_go/service"
@@ -14,8 +17,8 @@ var (
 )
 
 type UserController interface {
-	Join(*gin.Context) gin.H
-	Login(*gin.Context) gin.H
+	Join(*gin.Context)
+	Login(*gin.Context)
 }
 
 type userController struct {
@@ -23,29 +26,39 @@ type userController struct {
 }
 
 func NewUserController(service service.UserService) UserController {
-	return &userController {
+	return &userController{
 		service: service,
 	}
 }
 
-func (controller *userController) Join(ctx *gin.Context) gin.H {
+func (controller *userController) Join(ctx *gin.Context) {
+	defer routerErrorHandler(ctx)
+
 	var joinDTO userDTO.JoinDTO
 	err := ctx.ShouldBindJSON(&joinDTO)
-	errorHandler.ErrorHandling(err, "")
-	return gin.H{
+	errorHandler.ErrorHandling(err, "failed get joinDTO at controller")
+
+	ctx.IndentedJSON(http.StatusCreated, gin.H{
 		"user": controller.service.Join(joinDTO, ctx),
-	}
+	})
 }
 
-func (controller *userController) Login(ctx *gin.Context) gin.H {
+func (controller *userController) Login(ctx *gin.Context) {
+	defer routerErrorHandler(ctx)
+
 	var loginDTO userDTO.LoginDTO
 	err := ctx.ShouldBindJSON(&loginDTO)
-	errorHandler.ErrorHandling(err, "")
-	token := controller.service.Login(loginDTO, ctx)
-	if token == "" {
-		return nil
-	}
-	return gin.H{
+	errorHandler.ErrorHandling(err, "failed get loginDTO at controller")
+
+	ctx.IndentedJSON(http.StatusCreated, gin.H{
 		"token": controller.service.Login(loginDTO, ctx),
+	})
+}
+
+func routerErrorHandler(ctx *gin.Context) {
+	if r := recover(); r != nil {
+		error_message := fmt.Sprint(r)
+		errorResponse := dto.NewErrorResponse(error_message)
+		ctx.IndentedJSON(http.StatusBadRequest, errorResponse)
 	}
 }
