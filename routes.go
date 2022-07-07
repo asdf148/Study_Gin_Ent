@@ -40,7 +40,7 @@ func initializeRoutes() *gin.Engine {
 		todoRoutes.Use(tokenMiddleware.TokenVerify)
 		todoRoutes.POST("/", todoController.AddTodo)
 
-		todoRoutes.PUT("/todoId", todoController.ModifyTodo)
+		todoRoutes.PUT("/:todoId", todoController.ModifyTodo)
 
 		todoRoutes.DELETE("/:todoId", todoController.DeleteTodo)
 	}

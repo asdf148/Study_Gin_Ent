@@ -75,7 +75,7 @@ func (controller *todoController) ModifyTodo(ctx *gin.Context) {
 	intTodoId, err := strconv.Atoi(todoId)
 	errorHandler.ErrorHandling(err, "failed to convert string to int at controller")
 
-	ctx.IndentedJSON(http.StatusCreated, gin.H{
+	ctx.IndentedJSON(http.StatusOK, gin.H{
 		"todo": controller.service.ModifyTodo(updateTodoDTO, intTodoId, ctx),
 	})
 }
@@ -88,5 +88,5 @@ func (controller *todoController) DeleteTodo(ctx *gin.Context) {
 	errorHandler.ErrorHandling(err, "failed to convert string to int at controller")
 	controller.service.DeleteTodo(intTodoId, ctx)
 
-	ctx.IndentedJSON(http.StatusCreated, nil)
+	ctx.IndentedJSON(http.StatusOK, nil)
 }
